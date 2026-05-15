@@ -1,0 +1,392 @@
+# TealTiger v1.3.0 — Bundle Manifest
+# This file describes everything included in the tealtiger@1.3.0 package.
+# Published: June 2026
+# License: Apache 2.0
+
+bundle:
+  name: tealtiger
+  version: "1.3.0"
+  codename: "Autonomous Agent Governance"
+  release_date: "2026-06"
+  license: "Apache-2.0"
+  compatibility:
+    backward_compatible_with: "1.2.x"
+    breaking_changes: false
+    node_minimum: "18.0.0"
+    python_minimum: "3.10"
+
+sdks:
+  typescript:
+    package: "tealtiger"
+    registry: "npm"
+    version: "1.3.0"
+    entry: "dist/index.js"
+    types: "dist/index.d.ts"
+  python:
+    package: "tealtiger"
+    registry: "pypi"
+    version: "1.3.0"
+    entry: "tealtiger/__init__.py"
+
+docker:
+  images:
+    - name: "tealtigeradmin/tealtiger-typescript"
+      tag: "1.3.0"
+    - name: "tealtigeradmin/tealtiger-python"
+      tag: "1.3.0"
+    - name: "tealtigeradmin/tealtiger-docker"
+      tag: "1.3.0"
+
+# ─── Core Engine ───────────────────────────────────────────────
+
+core:
+  - module: TealEngine
+    version: "1.3.0"
+    description: "Pre/post evaluation pipeline with FREEZE rules, automation levels, NHI verification"
+    entry: "core/engine/v1.3/TealEngineV13"
+    new_in_v13: true
+
+  - module: TealEngineV12
+    version: "1.2.0"
+    description: "Parallel module evaluation (preserved for backward compatibility)"
+    entry: "core/engine/v1.2/TealEngineV12"
+    new_in_v13: false
+
+  - module: FreezeRuleEngine
+    version: "1.3.0"
+    description: "Immutable, non-overridable safety controls"
+    entry: "core/engine/v1.3/TealEngineV13"
+    new_in_v13: true
+
+  - module: AutomationLevelResolver
+    version: "1.3.0"
+    description: "Per-rule automation level evaluation (auto_allow/deny/sanitize/approval_required)"
+    entry: "core/engine/v1.3/automation-levels"
+    new_in_v13: true
+
+  - module: ApprovalManager
+    version: "1.3.0"
+    description: "PENDING decision workflow with approval tokens"
+    entry: "core/engine/v1.3/TealEngineV13"
+    new_in_v13: true
+
+  - module: PolicyHotSwap
+    version: "1.3.0"
+    description: "Runtime policy bundle replacement with integrity validation"
+    entry: "core/engine/v1.3/policy-hotswap"
+    new_in_v13: true
+
+# ─── Governance Modules ────────────────────────────────────────
+
+modules:
+  # v1.1 modules (preserved)
+  - module: TealGuard
+    version: "1.3.0"
+    domain: SEC
+    description: "Security guardrails — PII, prompt injection (regex + ML), content moderation, Unicode normalization"
+    new_in_v13: false
+    enhancements_in_v13:
+      - "Unicode normalization stripping (Tag-block, variation selectors, zero-width)"
+      - "Encoded output detection (base64, hex, ROT13)"
+      - "Control character sanitization (ANSI, OSC 52, BEL)"
+      - "Markdown exfiltration detection"
+      - "Multimodal input governance"
+
+  - module: TealMonitor
+    version: "2.0.0"
+    domain: COST
+    description: "Governance-owned cost limits, anomaly detection, reasoning-token budgets, per-agent attribution"
+    new_in_v13: true
+    capabilities:
+      - "Governance-owned budget ceilings (cannot be raised by app code)"
+      - "Per-request, per-session, per-agent, per-daily limits"
+      - "Reasoning-token budgets (o1/o3 models)"
+      - "Cost anomaly detection (rolling baseline)"
+      - "Per-agent and per-workflow cost attribution"
+
+  - module: TealCircuit
+    version: "1.1.0"
+    domain: REL
+    description: "Circuit breaker for cascading failure prevention"
+    new_in_v13: false
+
+  - module: TealReliability
+    version: "1.2.0"
+    domain: REL
+    description: "Retry budgets, fallback chains, deterministic degradation"
+    new_in_v13: false
+
+  - module: TealMemory
+    version: "1.3.0"
+    domain: MEM
+    description: "Memory governance with provenance tagging, injection detection, exfiltration prevention"
+    new_in_v13: false
+    enhancements_in_v13:
+      - "Write provenance tagging (5-tier trust with transitive propagation)"
+      - "Memory instruction injection detection"
+      - "Memory exfiltration detection"
+
+  - module: TealSecrets
+    version: "1.2.0"
+    domain: SEC
+    description: "Secret detection with 500+ patterns across 9 categories"
+    new_in_v13: false
+
+  - module: TealRegistry
+    version: "1.3.0"
+    domain: REG
+    description: "Model/tool allowlisting, MCP definition-drift monitoring, adapter composition governance"
+    new_in_v13: false
+    enhancements_in_v13:
+      - "MCP definition-drift detection (hash comparison)"
+      - "Tool description injection scanning"
+      - "Adapter composition allowlist"
+
+  - module: TealAudit
+    version: "1.1.0"
+    domain: EVID
+    description: "Structured audit logging with PII redaction and correlation IDs"
+    new_in_v13: false
+
+  # v1.3 new modules
+  - module: TealProof
+    version: "1.3.0"
+    domain: EVID
+    description: "Cryptographic governance receipts — Merkle tree, RFC 3161 timestamping, Governance Passport, Verification SDK"
+    new_in_v13: true
+    capabilities:
+      - "SHA-256 Merkle tree with inclusion proofs"
+      - "RFC 3161 timestamping anchor"
+      - "Governance Passport (rolling coverage attestation)"
+      - "Standalone Verification SDK (3 levels: integrity, sufficiency, appropriateness)"
+
+  - module: TealFlow
+    version: "1.3.0"
+    domain: FLOW
+    description: "Declarative YAML governance workflows with job dependencies and org-level inheritance"
+    new_in_v13: true
+    capabilities:
+      - "YAML workflow parsing and validation"
+      - "Job dependency resolution (DAG)"
+      - "Parallel execution of independent jobs"
+      - "Org-level inheritance with floor enforcement"
+      - "Conditional execution (if expressions)"
+      - "Pretty printer with round-trip guarantee"
+
+  - module: TealClassifier
+    version: "1.3.0"
+    domain: SEC
+    description: "Local ML inference (ONNX) for content classification — no data exfiltration"
+    new_in_v13: true
+    capabilities:
+      - "ONNX model loading (CPU inference)"
+      - "4 ensemble modes: regex_only, ml_only, ensemble_union, ensemble_intersection"
+      - "Confidence scoring [0.0, 1.0]"
+      - "Fallback to regex_only on model failure"
+      - "< 5ms inference latency (CPU, 512 tokens)"
+
+  - module: TealDrift
+    version: "1.3.0"
+    domain: DRIFT
+    description: "Behavioral drift detection with statistical baselines and MCP definition-drift monitoring"
+    new_in_v13: true
+    capabilities:
+      - "Rolling statistical baselines per agent/provider/model"
+      - "5 drift dimensions: actions, tools, content, temporal, errors"
+      - "min_samples guard (prevents false positives during learning)"
+      - "MCP definition-drift monitoring"
+
+  - module: TealState
+    version: "1.3.0"
+    domain: TEMP
+    description: "Context size governance with provenance metadata and trust-tier enforcement"
+    new_in_v13: true
+    capabilities:
+      - "Token-based context size limits"
+      - "Eviction strategies (deny, truncate_oldest, truncate_lowest_priority)"
+      - "Provenance metadata for every context entry"
+      - "TTL enforcement for stale entries"
+
+  - module: TealTemporal
+    version: "1.3.0"
+    domain: TEMP
+    description: "Session TTL enforcement, cooldown periods, and time-of-day restrictions"
+    new_in_v13: true
+    capabilities:
+      - "Session TTL with configurable expiry actions"
+      - "Cooldown periods between sensitive actions"
+      - "Time-of-day restrictions with timezone support"
+      - "Rate limiting per action type"
+
+  - module: NHIGovernance
+    version: "1.3.0"
+    domain: NHI
+    description: "Non-human identity lifecycle management, scope enforcement, Zero Standing Privilege"
+    new_in_v13: true
+    capabilities:
+      - "Agent lifecycle states (active/suspended/revoked)"
+      - "Scope enforcement with environment constraints"
+      - "Zero Standing Privilege with JIT grants"
+      - "Cryptographic agent attestation (JWT, mTLS, workload identity)"
+
+# ─── Platform Adapters ─────────────────────────────────────────
+
+adapters:
+  - adapter: BedrockAgentsAdapter
+    version: "1.3.0"
+    platform: "AWS"
+    description: "Guardrail adapter for Amazon Bedrock Agents"
+    subpath_export: "tealtiger/adapters/bedrock"
+    new_in_v13: true
+
+  - adapter: AgentCorePlugin
+    version: "1.3.0"
+    platform: "AWS"
+    description: "Lifecycle governance hooks for AWS AgentCore"
+    subpath_export: "tealtiger/adapters/agentcore"
+    new_in_v13: true
+
+  - adapter: AzureAIAgentMiddleware
+    version: "1.3.0"
+    platform: "Azure"
+    description: "Tool-call pipeline middleware for Azure AI Agent Service"
+    subpath_export: "tealtiger/adapters/azure"
+    new_in_v13: true
+
+# ─── Governance Features ───────────────────────────────────────
+
+governance:
+  - feature: OWASPPolicyPack
+    version: "1.3.0"
+    description: "Pre-built zero-config policies covering OWASP ASI-01 through ASI-10"
+    new_in_v13: true
+
+  - feature: AntiTamperControls
+    version: "1.3.0"
+    description: "Forbidden config key rejection, bundle integrity validation, workload identity binding"
+    new_in_v13: true
+
+  - feature: CodeChangeGovernance
+    version: "1.3.0"
+    description: "CODE_CHANGE action class with path/branch allowlists and two-person rule"
+    new_in_v13: true
+
+  - feature: SOCPipeline
+    version: "1.3.0"
+    description: "SIEM export (JSON/CEF/LEEF), OpenTelemetry spans, response hooks with dedup/rate limiting"
+    new_in_v13: true
+
+# ─── Security ──────────────────────────────────────────────────
+
+security:
+  - component: BundleValidator
+    description: "SHA-256 integrity hash + Ed25519 signature verification on every policy load"
+
+  - component: WorkloadBinding
+    description: "Bind governance to platform workload identity (K8s ServiceAccount, IAM role, ACI)"
+
+  - component: CapabilityNegotiation
+    description: "Refuse policy bundles requiring unsupported engine features"
+
+  - component: ForbiddenConfigKeys
+    description: "Reject disable_enforcement, bypass, allow_all, permissive_mode, freeze.disable, audit.disable"
+
+# ─── Providers (12) ────────────────────────────────────────────
+
+providers:
+  existing:
+    - OpenAI
+    - Anthropic
+    - Google Gemini
+    - AWS Bedrock
+    - Azure OpenAI
+    - Cohere
+    - Mistral AI
+  new_in_v13:
+    - DeepSeek
+    - Groq
+    - Together AI
+    - xAI (Grok)
+    - HuggingFace TGI
+
+# ─── Governance Domains (10) ───────────────────────────────────
+
+domains:
+  - id: SEC
+    name: Security
+    since: "1.1"
+    modules: [TealGuard, TealSecrets, TealClassifier]
+
+  - id: COST
+    name: Cost
+    since: "1.1"
+    modules: [TealMonitor]
+
+  - id: REL
+    name: Reliability
+    since: "1.1"
+    modules: [TealCircuit, TealReliability]
+
+  - id: MEM
+    name: Memory
+    since: "1.2"
+    modules: [TealMemory]
+
+  - id: REG
+    name: Registry
+    since: "1.2"
+    modules: [TealRegistry]
+
+  - id: EVID
+    name: Evidence
+    since: "1.2"
+    modules: [TealAudit, TealProof]
+
+  - id: NHI
+    name: Identity
+    since: "1.3"
+    modules: [NHIGovernance]
+
+  - id: FLOW
+    name: Workflow
+    since: "1.3"
+    modules: [TealFlow]
+
+  - id: TEMP
+    name: Temporal
+    since: "1.3"
+    modules: [TealTemporal, TealState]
+
+  - id: DRIFT
+    name: Drift
+    since: "1.3"
+    modules: [TealDrift]
+
+# ─── TEEC Schema ──────────────────────────────────────────────
+
+evidence:
+  teec_version: "2.0.0"
+  schema: "schemas/teec/v2.0.0.json"
+  governance_event_schema: "schemas/governance-events/v1.0.0.json"
+  export_formats:
+    - SARIF v2.1.0
+    - JUnit XML
+    - JSON
+    - CEF (SIEM)
+    - LEEF (SIEM)
+
+# ─── Performance Targets ──────────────────────────────────────
+
+performance:
+  - operation: "Basic evaluation (4 modules)"
+    target_p99: "< 15ms"
+  - operation: "Full pipeline (FREEZE + NHI + modules + hooks)"
+    target_p99: "< 25ms"
+  - operation: "PLAN_ONLY mode"
+    target_p99: "< 10ms"
+  - operation: "TealClassifier (ONNX, CPU)"
+    target_p99: "< 5ms"
+  - operation: "TealDrift evaluation"
+    target_p99: "< 3ms"
+  - operation: "TealProof receipt generation"
+    target_p99: "< 2ms"
