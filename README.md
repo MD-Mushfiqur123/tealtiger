@@ -114,7 +114,7 @@ response = client.chat.completions.create(
 - **Cost Alerts** — Notifications at configurable thresholds
 - **Circuit Breakers** — Prevent runaway cost loops automatically
 
-### 🔌 7 LLM Providers
+### 🔌 12 LLM Providers
 - **OpenAI** — GPT-4, GPT-4o, GPT-3.5
 - **Anthropic** — Claude 3.5, Claude 3
 - **Google Gemini** — Multimodal support
@@ -122,13 +122,26 @@ response = client.chat.completions.create(
 - **Azure OpenAI** — Deployment-based routing
 - **Cohere** — Chat, RAG, embeddings
 - **Mistral AI** — European data residency
+- **DeepSeek** — Cost-efficient reasoning models
+- **Groq** — Ultra-low latency inference
+- **Together AI** — Open-source model hosting
+- **HuggingFace TGI** — Self-hosted inference
+- **xAI (Grok)** — Real-time knowledge
+
+### 🔌 Platform Adapters
+- **AWS Bedrock Agents** — Native guardrail adapter
+- **AWS AgentCore** — Pre/post action governance plugin
+- **Azure AI Agent Service** — Tool-call pipeline middleware
 
 ### 🏗️ Governance Architecture
 - **Deterministic Policy Evaluation** — No LLM in the governance path
 - **Structured Evidence** — Every decision produces a reconstructable record
+- **Cryptographic Proof** — Merkle trees + RFC 3161 timestamping (TealProof)
+- **Non-Human Identity (NHI)** — Agent lifecycle, scope enforcement, Zero Standing Privilege
+- **FREEZE Rules** — Immutable emergency kill switches with tamper detection
 - **Correlation IDs** — End-to-end traceability across the decision chain
 - **Policy Traceability** — Every verdict traces to the human policy author
-- **OWASP ASI Coverage** — Addresses 8/10 OWASP Top 10 for Agentic Applications
+- **OWASP Agentic Top 10** — Zero-config policy pack covering all 10 ASI risks
 
 ---
 
@@ -136,13 +149,18 @@ response = client.chat.completions.create(
 
 | Dimension | What it does | Module |
 |-----------|-------------|--------|
-| 🛡️ **Security** | Secret detection (500+ patterns), prompt injection prevention, PII detection, content moderation | `TealSecrets` `TealGuard` |
-| 🔑 **Authority** | Tool/model allowlisting, provenance verification, supply chain scoring | `TealRegistry` |
+| 🛡️ **Security** | Secret detection (500+ patterns), prompt injection, PII, content moderation, Unicode normalization, encoded output detection | `TealSecrets` `TealGuard` |
+| 🔑 **Identity** | Non-Human Identity lifecycle, scope enforcement, Zero Standing Privilege, agent attestation | `TealEngine (NHI)` |
 | ⚡ **Reliability** | Circuit breakers, retry budgets, fallback chains, deterministic degradation | `TealCircuit` `TealReliability` |
-| 🧠 **Memory** | Write governance, read scope enforcement (session/user/tenant), retention TTL | `TealMemory` |
-| 💰 **Cost** | Budget enforcement (per-request/session/daily), anomaly detection, cost tracking | `TealMonitor` |
-| 📋 **Evidence** | Versioned audit logs, SARIF v2.1.0 export, JUnit XML, correlation IDs | `TealAudit` `TealVerify` |
-| ⚙️ **Policy** | ENFORCE / MONITOR / REPORT_ONLY modes, deterministic decisions, 7 providers | `TealEngine` |
+| 🧠 **Memory** | Write provenance, instruction injection detection, exfiltration prevention, scope enforcement | `TealMemory` |
+| 💰 **Cost** | Governance-owned ceilings, anomaly detection, reasoning-token budgets, per-agent attribution | `TealMonitor` |
+| 📋 **Evidence** | Cryptographic receipts (Merkle + RFC 3161), SARIF export, OTel spans, SIEM integration | `TealProof` `TealAudit` |
+| ⚙️ **Policy** | FREEZE rules, PLAN_ONLY mode, hot-swap bundles, anti-tamper, automation levels | `TealEngine` |
+| 🔄 **Workflow** | Declarative YAML governance workflows, org-level inheritance, floor enforcement | `TealFlow` |
+| 📊 **Drift** | Behavioral drift detection, statistical baselines, model output regression | `TealDrift` |
+| ⏱️ **Temporal** | Session TTL, cooldown periods, time-of-day restrictions | `TealTemporal` |
+| 🔍 **Registry** | MCP definition-drift monitoring, tool description scanning, adapter composition allowlist | `TealRegistry` |
+| 🧠 **Classification** | Local ONNX ML inference (≤20ms), ensemble modes, regex+ML combination | `TealClassifier` |
 
 > **Design principle:** No LLM in the governance path. Same input + same policy = same decision, every time.
 
@@ -219,29 +237,36 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
 
 ## 🗺️ Roadmap
 
-**Current:** v1.1.0 — 7 providers, TealEngine, guardrails, cost tracking
+**Current:** v1.3.0 — Autonomous Agent Governance (Released May 18, 2026)
+- TealEngine v1.3 with pre/post evaluation pipeline, FREEZE rules, automation levels
+- Non-Human Identity (NHI) governance with Zero Standing Privilege
+- TealProof — cryptographic governance receipts (Merkle + RFC 3161)
+- TealFlow — declarative YAML governance workflows
+- TealClassifier — local ONNX ML inference (≤20ms)
+- TealDrift, TealState, TealTemporal — behavioral, context, and session governance
+- TealMonitor v2 — governance-owned cost ceilings, anomaly detection
+- OWASP Agentic Top 10 policy pack (zero-config)
+- 12 LLM providers + 3 platform adapters (Bedrock, AgentCore, Azure)
+- Full Python SDK parity
 
-**Next:** v1.2.0 — Governance Bundle
-- 7 governance modules across 6 dimensions
-- Formal evidence contract with named reason codes
-- Secret detection (500+ patterns, confidence scoring)
-- Memory governance (5 scopes, 4 classifications)
-- Reliability controls (retry budgets, circuit breakers, fallback chains)
-- Model/tool registry with allowlisting and provenance verification
-- Evidence export (SARIF v2.1.0, JUnit XML, JSON)
-
-See the roadmap section above for the full plan.
+**Next:** v1.4.0 — Zero-Config Adoption
+- `observe()` mode — 1-line integration, instant visibility
+- Progressive disclosure: observe → suggest → enforce
+- Auto-baseline behavioral detection
+- Framework adapters (LangChain, CrewAI, AutoGen, LlamaIndex)
+- Developer experience overhaul
 
 ---
 
 ## 🌟 Community
 
+- **Discord**: [Join TealTiger Community](https://discord.gg/X2ePf8QAj)
 - **GitHub Discussions**: [Ask questions, share ideas](https://github.com/agentguard-ai/tealtiger/discussions)
+- **LinkedIn**: [TealTiger](https://www.linkedin.com/company/tealtiger)
+- **X (Twitter)**: [@TealtigerAI](https://x.com/TealtigerAI)
 - **Documentation**: [docs.tealtiger.ai](https://docs.tealtiger.ai)
 - **Blog**: [blogs.tealtiger.ai](https://blogs.tealtiger.ai)
 - **Playground**: [playground.tealtiger.ai](https://playground.tealtiger.ai)
-- **LinkedIn**: [TealTiger](https://www.linkedin.com/company/tealtiger)
-- **Dev.to**: [Blog](https://dev.to/nagasatish_chilakamarti_2)
 - **Email**: reachout@tealtiger.ai
 
 ---
