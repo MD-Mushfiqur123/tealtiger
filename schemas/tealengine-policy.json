@@ -1,0 +1,408 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/agentguard-ai/tealtiger/main/schemas/tealengine-policy.json",
+  "title": "TealEngine Policy Configuration",
+  "description": "JSON Schema for TealEngine policy configuration files. Defines the structure of governance policies for AI agents, including tool permissions, identity, code execution, behavioral limits, guardrails, budget rules, and policy rule sets.",
+  "type": "object",
+  "definitions": {
+    "costLimit": {
+      "type": "object",
+      "properties": {
+        "daily": { "type": "number", "description": "Maximum cost per day in USD" },
+        "hourly": { "type": "number", "description": "Maximum cost per hour in USD" }
+      },
+      "additionalProperties": false
+    },
+    "rateLimit": {
+      "type": "object",
+      "properties": {
+        "requests": { "type": "integer", "description": "Maximum number of requests" },
+        "window": { "type": "string", "description": "Time window for the rate limit (e.g. '1h', '5m')" }
+      },
+      "required": ["requests", "window"],
+      "additionalProperties": false
+    },
+    "toolConfig": {
+      "type": "object",
+      "properties": {
+        "allowed": { "type": "boolean", "description": "Whether the tool is allowed" },
+        "allowedTables": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Allowed database tables for database tools"
+        },
+        "maxRows": {
+          "type": "integer",
+          "description": "Maximum rows returned for database queries"
+        },
+        "maxSize": {
+          "type": "string",
+          "description": "Maximum file/data size (e.g. '100MB', '10MB')"
+        },
+        "rateLimit": {
+          "$ref": "#/definitions/rateLimit",
+          "description": "Per-tool rate limit"
+        }
+      },
+      "required": ["allowed"],
+      "additionalProperties": false
+    },
+    "piiDetection": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "description": "Enable PII detection" },
+        "action": {
+          "type": "string",
+          "enum": ["block", "redact", "mask", "alert"],
+          "description": "Action to take when PII is detected"
+        },
+        "detectTypes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["email", "phone", "ssn", "creditCard", "address", "ip", "username", "password", "apiKey"]
+          },
+          "description": "Types of PII to detect"
+        }
+      },
+      "required": ["enabled", "action"],
+      "additionalProperties": false
+    },
+    "contentModeration": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "description": "Enable content moderation" },
+        "action": {
+          "type": "string",
+          "enum": ["block", "transform", "alert"],
+          "description": "Action to take when harmful content is detected"
+        },
+        "useOpenAI": {
+          "type": "boolean",
+          "description": "Use OpenAI moderation API (true) or pattern-based detection (false)"
+        }
+      },
+      "required": ["enabled", "action"],
+      "additionalProperties": false
+    },
+    "promptInjection": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "description": "Enable prompt injection detection" },
+        "action": {
+          "type": "string",
+          "enum": ["block", "transform", "alert"],
+          "description": "Action to take when prompt injection is detected"
+        },
+        "sensitivity": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Detection sensitivity level"
+        }
+      },
+      "required": ["enabled", "action"],
+      "additionalProperties": false
+    },
+    "policyRule": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Rule name" },
+        "description": { "type": "string", "description": "Human-readable rule description" },
+        "priority": {
+          "type": "integer",
+          "description": "Rule evaluation priority (higher = evaluated first)"
+        },
+        "condition": {
+          "type": "object",
+          "properties": {
+            "agentId": { "type": "string", "description": "Agent ID pattern (supports glob)" },
+            "toolName": { "type": "string", "description": "Tool name pattern (supports glob)" },
+            "parameterExists": { "type": "string", "description": "Parameter name that must exist" }
+          },
+          "additionalProperties": false
+        },
+        "action": {
+          "type": "string",
+          "enum": ["allow", "deny", "transform"],
+          "description": "Action to take when the rule matches"
+        },
+        "reason": { "type": "string", "description": "Human-readable reason for the rule" }
+      },
+      "required": ["condition", "action", "reason"],
+      "additionalProperties": false
+    },
+    "budgetConfig": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Budget name" },
+        "limit": { "type": "number", "description": "Budget limit in USD" },
+        "period": {
+          "type": "string",
+          "enum": ["daily", "weekly", "monthly", "per_request", "per_session"],
+          "description": "Budget period"
+        },
+        "alertThresholds": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1, "maximum": 100 },
+          "description": "Alert thresholds as percentages of the limit"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["block", "alert"],
+          "description": "Action when budget is exceeded"
+        },
+        "enabled": { "type": "boolean", "description": "Whether the budget is active" }
+      },
+      "required": ["name", "limit", "period", "action"],
+      "additionalProperties": false
+    },
+    "customGuardrailRule": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Custom rule name" },
+        "pattern": { "type": "string", "description": "Regex pattern to match" },
+        "action": {
+          "type": "string",
+          "enum": ["block", "alert"],
+          "description": "Action when pattern matches"
+        },
+        "reason": { "type": "string", "description": "Reason for the rule" }
+      },
+      "required": ["name", "pattern", "action"],
+      "additionalProperties": false
+    },
+    "identityConfig": {
+      "type": "object",
+      "properties": {
+        "agentId": { "type": "string", "description": "Unique agent identifier" },
+        "role": { "type": "string", "description": "Agent role (e.g. 'assistant', 'developer', 'analyst')" },
+        "permissions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of granted permissions"
+        },
+        "forbidden": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of forbidden permission categories"
+        },
+        "costLimit": {
+          "$ref": "#/definitions/costLimit",
+          "description": "Per-identity cost limits"
+        }
+      },
+      "additionalProperties": false
+    },
+    "codeExecutionConfig": {
+      "type": "object",
+      "properties": {
+        "allowedLanguages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of allowed programming languages ('*' for all)"
+        },
+        "blockedFunctions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of blocked function names"
+        },
+        "blockedPatterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of blocked regex patterns"
+        },
+        "maxLength": {
+          "type": "integer",
+          "description": "Maximum allowed code length in characters"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Code execution timeout in milliseconds"
+        },
+        "requireSandbox": {
+          "type": "boolean",
+          "description": "Whether sandboxed execution is required"
+        }
+      },
+      "additionalProperties": false
+    },
+    "behavioralConfig": {
+      "type": "object",
+      "properties": {
+        "costLimit": {
+          "$ref": "#/definitions/costLimit",
+          "description": "Behavioral cost limits"
+        },
+        "rateLimit": {
+          "$ref": "#/definitions/rateLimit",
+          "description": "Behavioral rate limits"
+        },
+        "anomalyThreshold": {
+          "type": "number",
+          "description": "Anomaly detection threshold (standard deviations)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "guardrailsConfig": {
+      "type": "object",
+      "properties": {
+        "piiDetection": { "$ref": "#/definitions/piiDetection" },
+        "contentModeration": { "$ref": "#/definitions/contentModeration" },
+        "promptInjection": { "$ref": "#/definitions/promptInjection" },
+        "customRules": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/customGuardrailRule" },
+          "description": "Custom guardrail rules"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "name": {
+      "type": "string",
+      "description": "Policy name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable policy description"
+    },
+    "version": {
+      "type": "string",
+      "description": "Policy version identifier"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Policy evaluation priority (higher = evaluated first)"
+    },
+    "tools": {
+      "type": "object",
+      "description": "Tool permission configurations",
+      "additionalProperties": {
+        "$ref": "#/definitions/toolConfig"
+      },
+      "propertyNames": {
+        "type": "string",
+        "description": "Tool name identifier"
+      }
+    },
+    "identity": {
+      "$ref": "#/definitions/identityConfig",
+      "description": "Agent identity configuration"
+    },
+    "codeExecution": {
+      "$ref": "#/definitions/codeExecutionConfig",
+      "description": "Code execution policy controls"
+    },
+    "behavioral": {
+      "$ref": "#/definitions/behavioralConfig",
+      "description": "Behavioral constraints (cost, rate, anomaly)"
+    },
+    "guardrails": {
+      "$ref": "#/definitions/guardrailsConfig",
+      "description": "Guardrail configurations (PII, content, injection)"
+    },
+    "budget": {
+      "type": "object",
+      "description": "Budget settings for cost governance",
+      "properties": {
+        "maxCostPerRequest": {
+          "type": "number",
+          "description": "Maximum cost per request in USD"
+        },
+        "maxCostPerSession": {
+          "type": "number",
+          "description": "Maximum cost per session in USD"
+        },
+        "maxCostPerDay": {
+          "type": "number",
+          "description": "Maximum cost per day in USD"
+        }
+      },
+      "additionalProperties": false
+    },
+    "budgets": {
+      "type": "array",
+      "description": "Named budget configurations",
+      "items": { "$ref": "#/definitions/budgetConfig" }
+    },
+    "rules": {
+      "type": "array",
+      "description": "Individual policy rules with conditions and actions",
+      "items": { "$ref": "#/definitions/policyRule" }
+    },
+    "modelConfig": {
+      "type": "object",
+      "description": "Model-specific configuration overrides",
+      "properties": {
+        "allowedModels": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of allowed model identifiers"
+        },
+        "blockedModels": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of blocked model identifiers"
+        },
+        "maxTokensPerRequest": {
+          "type": "integer",
+          "description": "Maximum tokens per request"
+        },
+        "maxReasoningTokens": {
+          "type": "integer",
+          "description": "Maximum reasoning/thinking tokens per request"
+        },
+        "allowedProviders": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "openai", "anthropic", "gemini", "bedrock", "azure",
+              "cohere", "mistral", "deepseek", "groq", "togetherai",
+              "huggingface", "xai"
+            ]
+          },
+          "description": "List of allowed LLM providers"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "anyOf": [
+    {
+      "description": "At least one of tools, identity, codeExecution, behavioral, guardrails, budget, budgets, rules, or modelConfig must be specified",
+      "required": ["tools"]
+    },
+    {
+      "required": ["identity"]
+    },
+    {
+      "required": ["codeExecution"]
+    },
+    {
+      "required": ["behavioral"]
+    },
+    {
+      "required": ["guardrails"]
+    },
+    {
+      "required": ["budget"]
+    },
+    {
+      "required": ["budgets"]
+    },
+    {
+      "required": ["rules"]
+    },
+    {
+      "required": ["modelConfig"]
+    }
+  ],
+  "additionalProperties": false
+}
