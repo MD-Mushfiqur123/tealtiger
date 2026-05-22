@@ -10,8 +10,8 @@ Thank you to everyone who has contributed to TealTiger! 🐯
 - **[@lleonardo-franco](https://github.com/lleonardo-franco)** — DeepSeek quickstart example with guardrails and cost tracking — PR #50; CrewAI multi-agent governance example — PR #51; SaaS secret detector coverage (10 patterns + negative tests) — PR #3 (tealtiger-typescript-prod); Improve setup error messages with actionable DX — PR #4 (tealtiger-typescript-prod); Slack webhook URL detection — PR #5 (tealtiger-typescript-prod); SendGrid API key detection — PR #6 (tealtiger-typescript-prod); Stripe key detection coverage — PR #7 (tealtiger-typescript-prod); Custom guardrail support (TypeScript) — PR #8 (tealtiger-typescript-prod); Custom guardrail support (Python) — PR #5 (tealtiger-python-prod); Python async usage examples — PR #6 (tealtiger-python-prod); MCP governance example with TealRegistry definition-drift detection — PR #55; Redis memory adapter examples (TypeScript + Python) — PR #56; LLM provider cost comparison docs — PR #59
 - **[@resolvicomai](https://github.com/resolvicomai)** — Port GPT-4 Turbo cost tracking fix to Python SDK: longest-prefix matching, numeric `response.cost` — PR #4 (tealtiger-python-prod)
 - **[@dagangtj](https://github.com/dagangtj)** — "Your First PR" walkthrough for CONTRIBUTING.md — PR #75
-- **[@aprv10](https://github.com/aprv10)** — LangChain governance example with TealEngine policy evaluation and cost tracking — PR #58
-- **[@MD-Mushfiqur123](https://github.com/MD-Mushfiqur123)** — Gemini quickstart example with guardrails and cost tracking — PR #76; .editorconfig for consistent formatting — PR #77
+- **[@aprv10](https://github.com/aprv10)** — LangChain governance example with TealEngine policy evaluation and cost tracking — PR #58; TealEngine policy JSON Schema with editor autocomplete — PR #78
+- **[@MD-Mushfiqur123](https://github.com/MD-Mushfiqur123)** — Gemini quickstart example with guardrails and cost tracking — PR #76; .editorconfig for consistent formatting — PR #77; Bedrock quickstart example with multi-model routing — PR #79
 
 ## Core Team
 
