@@ -13,25 +13,20 @@
  *   npx ts-node examples/langchain-governance/index.ts
  */
 
-const AGENT_ID = 'langchain-governance-demo-agent';
-const RUN_ID = `langchain-demo-${Date.now()}`;
-const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
-
-if (!process.env.OPENAI_API_KEY) {
-  console.error('LangChain governance example failed: Error: OPENAI_API_KEY is required to run the LangChain governance example.');
-  process.exit(1);
-}
-
-const { ChatOpenAI } = require('@langchain/openai');
-const { tool, createAgent } = require('langchain');
-const z = require('zod');
-const {
+import { ChatOpenAI } from '@langchain/openai';
+import { createAgent, tool } from 'langchain';
+import * as z from 'zod';
+import {
   BudgetManager,
   CostTracker,
   ContextManager,
   InMemoryCostStorage,
   TealEngine,
-} = require('tealtiger');
+} from 'tealtiger';
+
+const AGENT_ID = 'langchain-governance-demo-agent';
+const RUN_ID = `langchain-demo-${Date.now()}`;
+const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 
 type ToolCallInput = Record<string, unknown>;
 
@@ -206,6 +201,10 @@ const deleteCustomer = tool(
 );
 
 async function main(): Promise<void> {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is required to run the LangChain governance example.');
+  }
+
   const model = new ChatOpenAI({
     model: MODEL,
     temperature: 0,
