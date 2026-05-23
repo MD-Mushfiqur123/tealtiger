@@ -1,0 +1,32 @@
+# TealTiger Automatic PR Labeling
+#
+# Automatically labels pull requests based on changed file paths and
+# PR title patterns using the labeler action.
+#
+# NOTE: This file is located at ci/pr-labeling.yml due to token scope
+# limitations. It must be moved to .github/workflows/pr-labeling.yml
+# by a maintainer with the `workflow` OAuth scope.
+#
+# See https://github.com/actions/labeler for configuration docs.
+
+name: PR Labeling
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    name: Apply labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Label PR
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: ci/labeler-config.yml
+          sync-labels: true

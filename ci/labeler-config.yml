@@ -1,0 +1,35 @@
+documentation:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: docs/**
+    - any-glob-to-any-file: examples/**
+
+python:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: packages/tealtiger-python/**
+
+typescript:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: packages/tealtiger-sdk/**
+
+ci:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: .github/workflows/**
+
+enhancement:
+- any:
+  - title:
+    - starts-with: feat:
+
+bug:
+- any:
+  - title:
+    - starts-with: fix:
+
+chore:
+- any:
+  - title:
+    - starts-with: chore:
