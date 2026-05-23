@@ -1,0 +1,48 @@
+{
+  "$schema": "../schemas/tealtiger-policy.schema.json",
+  "identity": {
+    "agentId": "restricted-agent-001",
+    "role": "readonly-analyst",
+    "permissions": ["read:data", "read:logs", "chat:readonly"],
+    "forbidden": ["write:*", "delete:*", "admin:*"]
+  },
+  "tools": {
+    "chat": { "allowed": true },
+    "file_read": {
+      "allowed": true,
+      "maxSize": "2MB"
+    },
+    "file_write": {
+      "allowed": false
+    },
+    "file_delete": {
+      "allowed": false
+    },
+    "database_query": {
+      "allowed": true,
+      "allowedTables": ["public_reports", "aggregated_views"],
+      "maxRows": 1000
+    },
+    "database_write": {
+      "allowed": false
+    },
+    "code_executor": {
+      "allowed": false
+    },
+    "network_request": {
+      "allowed": true,
+      "rateLimit": { "max": 30, "window": "1m" },
+      "parameters": {
+        "allowedDomains": ["api.trusted-source.com", "data.internal.corp"],
+        "blockedDomains": ["*.external.io", "*.untrusted.dev"]
+      }
+    },
+    "shell": {
+      "allowed": false
+    }
+  },
+  "codeExecution": {
+    "allowedLanguages": [],
+    "requireSandbox": false
+  }
+}

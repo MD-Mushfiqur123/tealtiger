@@ -1,0 +1,72 @@
+{
+  "$schema": "../schemas/tealtiger-policy.schema.json",
+  "identity": {
+    "agentId": "multi-model-router-001",
+    "role": "assistant",
+    "permissions": ["chat:users", "use:models"],
+    "forbidden": ["admin:*"]
+  },
+  "tools": {
+    "chat": { "allowed": true },
+    "chat-gpt4": {
+      "allowed": true,
+      "rateLimit": { "max": 100, "window": "1h" },
+      "parameters": {
+        "model": "gpt-4",
+        "provider": "openai",
+        "costPerToken": 0.00003,
+        "fallbackModel": "gpt-3.5-turbo"
+      }
+    },
+    "chat-claude": {
+      "allowed": true,
+      "rateLimit": { "max": 200, "window": "1h" },
+      "parameters": {
+        "model": "claude-3-opus",
+        "provider": "anthropic",
+        "costPerToken": 0.000015,
+        "fallbackModel": "claude-3-sonnet"
+      }
+    },
+    "chat-llama": {
+      "allowed": true,
+      "rateLimit": { "max": 500, "window": "1h" },
+      "parameters": {
+        "model": "llama-3-70b",
+        "provider": "together",
+        "costPerToken": 0.000001,
+        "fallbackModel": "llama-3-8b"
+      }
+    },
+    "embedding": {
+      "allowed": true,
+      "rateLimit": { "max": 1000, "window": "1h" },
+      "parameters": {
+        "model": "text-embedding-3-small",
+        "provider": "openai"
+      }
+    }
+  },
+  "behavioral": {
+    "costLimit": {
+      "daily": 100.0,
+      "monthly": 2500.0
+    },
+    "rateLimit": {
+      "requests": 5000,
+      "window": "1h"
+    }
+  },
+  "content": {
+    "pii": {
+      "enabled": true,
+      "blockedTypes": ["email", "phone", "ssn"],
+      "redactInLogs": true
+    },
+    "moderation": {
+      "enabled": true,
+      "threshold": 0.9,
+      "categories": ["hate", "violence", "sexual"]
+    }
+  }
+}

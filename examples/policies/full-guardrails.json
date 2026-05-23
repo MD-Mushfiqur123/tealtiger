@@ -1,0 +1,53 @@
+{
+  "$schema": "../schemas/tealtiger-policy.schema.json",
+  "identity": {
+    "agentId": "guardrails-agent-001",
+    "role": "customer-support",
+    "permissions": ["read:knowledge", "chat:users"],
+    "forbidden": ["delete:*", "write:accounts"]
+  },
+  "tools": {
+    "chat": { "allowed": true },
+    "file_read": { "allowed": true, "maxSize": "10MB" },
+    "file_write": { "allowed": false },
+    "code_executor": {
+      "allowed": true,
+      "rateLimit": { "max": 10, "window": "1h" }
+    }
+  },
+  "content": {
+    "pii": {
+      "enabled": true,
+      "blockedTypes": ["ssn", "credit_card", "email", "phone"],
+      "redactInLogs": true
+    },
+    "moderation": {
+      "enabled": true,
+      "threshold": 0.85,
+      "categories": ["hate", "violence", "sexual", "self-harm"]
+    }
+  },
+  "codeExecution": {
+    "allowedLanguages": ["python", "javascript"],
+    "blockedFunctions": ["eval", "exec", "system", "os.system"],
+    "requireSandbox": true,
+    "timeout": 30000
+  },
+  "behavioral": {
+    "rateLimit": {
+      "requests": 1000,
+      "window": "1h"
+    },
+    "anomalyThreshold": 2.5
+  },
+  "memory": {
+    "maxSize": 10485760,
+    "validateInputs": true,
+    "sanitizeBeforeStorage": true,
+    "blockedPatterns": [
+      "password.*=",
+      "api_key.*=",
+      "secret.*="
+    ]
+  }
+}

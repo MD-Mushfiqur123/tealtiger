@@ -1,0 +1,11 @@
+{
+  "$schema": "../schemas/tealtiger-policy.schema.json",
+  "identity": {
+    "agentId": "minimal-agent-001",
+    "role": "assistant",
+    "permissions": ["chat"]
+  },
+  "tools": {
+    "chat": { "allowed": true }
+  }
+}

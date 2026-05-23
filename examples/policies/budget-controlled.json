@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/tealtiger-policy.schema.json",
+  "identity": {
+    "agentId": "budget-agent-001",
+    "role": "analyst",
+    "permissions": ["read:analytics", "chat:internal"],
+    "costLimit": {
+      "daily": 25.0,
+      "monthly": 500.0
+    }
+  },
+  "tools": {
+    "chat": { "allowed": true },
+    "file_read": { "allowed": true, "maxSize": "5MB" },
+    "database_query": {
+      "allowed": true,
+      "allowedTables": ["reports", "analytics"],
+      "maxRows": 5000
+    }
+  },
+  "behavioral": {
+    "costLimit": {
+      "daily": 50.0,
+      "hourly": 10.0,
+      "monthly": 1000.0
+    },
+    "rateLimit": {
+      "requests": 500,
+      "window": "1h"
+    },
+    "anomalyThreshold": 3.0
+  }
+}
